@@ -4,7 +4,7 @@ use std::io::{self, BufRead, BufReader, Write};
 use std::path::PathBuf;
 
 // mod crate::render_jinja;
-use crate::render_jinja::{self, render_template};
+use crate::render_jinja::{render_template};
 
 pub fn process_file(file: File, file_path: &PathBuf, prefix: &str) {
     let reader = BufReader::new(file);

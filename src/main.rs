@@ -71,7 +71,7 @@ fn main() {
     // Check if the prefix is empty and try to read from settings
     if template_prefix.is_empty() {
         template_prefix =
-            load_parameter_from_settings("prefix").unwrap_or_else(|| "tf".to_string());
+            load_parameter_from_settings("prefix").unwrap_or_else(|| "##tftpl:".to_string());
     }
 
     println!("Searching for files with extension: {}", extension);

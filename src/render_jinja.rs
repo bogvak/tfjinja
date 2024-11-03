@@ -1,5 +1,5 @@
 use tera::{Tera, Context};
-use std::{collections::HashMap, path::Path};
+use std::{collections::HashMap};
 
 pub fn render_template(template_content: &str, template_name: &str, params: HashMap<String, String>) -> Option<String> {
     let mut tera = Tera::default();
