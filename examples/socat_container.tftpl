@@ -1,0 +1,36 @@
+# Sidecar socat container
+container {
+  name  = "${local.app_name}-socat-container"
+  image = "alpine/socat"
+
+  volume_mount {
+    name       = "mysql-socket"
+    mount_path = "/var/run/mysqld/"
+  }
+
+  command = ["socat", "UNIX-LISTEN:/var/run/mysqld/mysqld.sock,fork,reuseaddr", "TCP4:mysql.mysql.svc.cluster.local:3306"]
+  resources {
+    limits = {
+      cpu    = "{{cpu_limit | default(value='100m')}}"
+      memory = "{{memory_limit | default(value='128Mi')}}"
+    }
+    requests = {
+      cpu    = "{{cpu_request | default(value='100m')}}"
+      memory = "{{memory_request | default(value='64Mi')}}"
+    }
+  }
+
+  {% if add_sec_context -%}
+  security_context {
+    run_as_group = "{{sec_id | default(value='999')}}"
+    run_as_user = "{{sec_id | default(value='999')}}"
+  }
+  {% endif %}
+
+  {% if add_sec_context_user -%}
+  security_context {
+    run_as_group = "{{sec_id | default(value='999')}}"
+    run_as_user = "{{sec_id_user | default(value='999')}}"
+  }
+  {% endif %}
+}
