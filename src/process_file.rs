@@ -4,7 +4,7 @@ use std::io::{self, BufRead, BufReader, Write};
 use std::path::PathBuf;
 
 // mod crate::render_jinja;
-use crate::render_jinja::{render_template};
+use crate::render_jinja::render_template;
 
 pub fn process_file(file: File, file_path: &PathBuf, prefix: &str) {
     let reader = BufReader::new(file);
@@ -62,10 +62,10 @@ pub fn process_file(file: File, file_path: &PathBuf, prefix: &str) {
 fn read_external_file_with_indentation(
     file_path: &PathBuf,
     indentation: &str,
-    tpl_params: HashMap<String, String>
+    tpl_params: HashMap<String, String>,
 ) -> Result<Vec<String>, io::Error> {
     let mut content_lines = Vec::new();
-    
+
     if let Ok(external_file) = File::open(file_path) {
         let external_reader = BufReader::new(external_file);
         for line in external_reader.lines() {
@@ -81,15 +81,14 @@ fn read_external_file_with_indentation(
             "Failed to open external file",
         ));
     }
-    
+
     // let prm: HashMap<String, String> = HashMap::from([
     //     // ("cpu_limit".to_string(), "200m".to_string()),
     // ]);
 
     let template_content = content_lines.join("\n");
-    let rendered_content 
-        = render_template(&template_content, "test", tpl_params)
-            .unwrap_or(template_content);
+    let rendered_content =
+        render_template(&template_content, "test", tpl_params).unwrap_or(template_content);
 
     Ok(vec![rendered_content])
 }
@@ -97,22 +96,21 @@ fn read_external_file_with_indentation(
 fn read_external_external_template_with_param(
     command: &str,
     indentation: &str,
-    current_file_path: &PathBuf
+    current_file_path: &PathBuf,
 ) -> Result<Vec<String>, io::Error> {
     let parameters = parse_template_string(command);
     // Print the resulting HashMap
     for (key, value) in &parameters {
         println!("{}: {}", key, value);
     }
-    
+
     let external_file_path = &parameters["__path"].trim_start();
     let path = current_file_path.parent().unwrap().join(external_file_path);
     match fs::canonicalize(&path) {
-        Ok(resolved_path) => 
-        {
+        Ok(resolved_path) => {
             println!("Resolved path: {:?}", resolved_path);
             read_external_file_with_indentation(&resolved_path, indentation, parameters)
-        },
+        }
         Err(e) => {
             println!("{}", path.display());
             eprintln!("Error resolving path: {}", e);
@@ -153,7 +151,7 @@ fn add_template_to_file(
     let leading_whitespace = &content[..content.find(trimmed_content).unwrap_or(0)];
 
     // Extract the string after the prefix
-    if let Some(command) = trimmed_content.strip_prefix(prefix) {        
+    if let Some(command) = trimmed_content.strip_prefix(prefix) {
         // Retrieve content with indentation
         match read_external_external_template_with_param(&command, leading_whitespace, file_path) {
             Ok(external_lines) => {
@@ -171,10 +169,7 @@ fn add_template_to_file(
                     String::from("<<")
                 ));
             }
-            Err(_) => eprintln!(
-                "Could not read content from {}",
-                command
-            ),
+            Err(_) => eprintln!("Could not read content from {}", command),
         }
     }
 }

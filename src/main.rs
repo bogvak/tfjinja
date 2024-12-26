@@ -1,5 +1,5 @@
 use clap::Parser;
-use config::{ConfigBuilder};
+use config::ConfigBuilder;
 use std::fs::File;
 use std::path::PathBuf;
 use walkdir::WalkDir;
@@ -19,23 +19,23 @@ struct Cli {
     prefix: String,
 }
 
-    fn load_parameter_from_settings(param: &str) -> Option<String> {
-        let builder: ConfigBuilder<config::builder::DefaultState> = ConfigBuilder::default();
-        let settings = builder
-            .add_source(config::File::with_name("settings"))
-            .build();
-        if let Ok(config) = settings {
-            // Read the key 'param' from the settings
-            if let Ok(param_value) = config.get::<String>(param) {
-                return Some(param_value);
-            } else {
-                eprintln!("Key 'param' not found or could not be read");
-            };
+fn load_parameter_from_settings(param: &str) -> Option<String> {
+    let builder: ConfigBuilder<config::builder::DefaultState> = ConfigBuilder::default();
+    let settings = builder
+        .add_source(config::File::with_name("settings"))
+        .build();
+    if let Ok(config) = settings {
+        // Read the key 'param' from the settings
+        if let Ok(param_value) = config.get::<String>(param) {
+            return Some(param_value);
         } else {
-            eprintln!("Failed to load settings");
-        }
-        None
+            eprintln!("Key 'param' not found or could not be read");
+        };
+    } else {
+        eprintln!("Failed to load settings");
     }
+    None
+}
 
 fn find_files_with_extension(extension: &str) -> Vec<PathBuf> {
     let mut results = Vec::new();
