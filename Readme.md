@@ -157,7 +157,7 @@ If you'd prefer to build the utility from source, follow these steps:
 1. Clone the repository:
 ```bash
    git clone https://github.com/bogvak/tfjinja.git
-   cd tftpl
+   cd tfjinja
 ```
 2. Build the binary:
 
@@ -166,7 +166,7 @@ cargo build --release
 ```
 3. The binary will be available in the target/release/ directory:
 ```bash
-./target/release/tftpl
+./target/release/
 ```
 4. Add the binary to your PATH to use it globally.
 
